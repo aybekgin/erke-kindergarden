@@ -438,8 +438,14 @@ const nextBtn = document.querySelector('.carousel-next');
 // Function to update carousel
 function updateCarousel() {
     const image = currentImages[currentImageIndex];
-    carouselImage.src = image.src;
-    carouselCaption.textContent = image.caption;
+    console.log('Updating carousel:', currentCategory, currentImageIndex, image.src);
+    
+    // Force image reload to avoid caching issues
+    carouselImage.src = '';
+    setTimeout(() => {
+        carouselImage.src = image.src;
+        carouselCaption.textContent = image.caption;
+    }, 10);
     
     // Update indicators
     document.querySelectorAll('.carousel-indicator').forEach((indicator, index) => {
@@ -468,8 +474,13 @@ document.querySelectorAll('.gallery-category').forEach(category => {
         currentImageIndex = 0;
         
         console.log('Images found:', currentImages.length);
+        console.log('Image paths:', currentImages.map(img => img.src));
         
         if (currentImages.length > 0) {
+            // Reset carousel image
+            carouselImage.src = '';
+            carouselCaption.textContent = '';
+            
             // Show modal
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
@@ -487,8 +498,10 @@ document.querySelectorAll('.gallery-category').forEach(category => {
                 carouselIndicators.appendChild(indicator);
             });
             
-            // Update carousel
-            updateCarousel();
+            // Update carousel after a short delay to ensure modal is visible
+            setTimeout(() => {
+                updateCarousel();
+            }, 100);
         }
     });
 });
